@@ -17,17 +17,21 @@ USER_AGENT = [
 
 HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-language': 'en-US,en;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.8',
+    'Accept-Enconding': 'gzip, deflate, sdch',
     'Connection': 'keep-alive',
-    'User-agent': USER_AGENT[random.randint(0, len(USER_AGENT)-1)]
+    'User-Agent': USER_AGENT[random.randint(0, len(USER_AGENT)-1)]
 }
 
-def parse_markup(url):
+SESSION = requests.Session()
+
+def parse_markup(url, listings_per_page):
     """
     Send web requests using browser headers
     Returns BeautifulSoup object from parsed response markup
     """
-    response = requests.get(url, headers=HEADERS)
+    cookies = {"listing_results_per_page": "%s" % listings_per_page}
+    response = SESSION.get(url, headers=HEADERS, cookies=cookies)
     if int(response.status_code) != 200:
         raise ValueError("Unsuccessful request: %s" % url)
     spider = BeautifulSoup(response.text, 'lxml')
