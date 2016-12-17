@@ -32,7 +32,7 @@ class GoogleGeocoder(Geocoders):
     """Google geocoder"""
 
     def __init__(self, address):
-        return super(GoogleGeocoder, self).__init__(self, address)
+        return super(GoogleGeocoder, self).__init__(address)
 
     # Maximum of 2500 reqs per IP per day, 10 reqs/sec
     def geocode(self):
@@ -45,7 +45,7 @@ class BingGeocoder(Geocoders):
     """Bing geocoder"""
 
     def __init__(self, address):
-        return super(BingGeocoder, self).__init__(self, address)
+        return super(BingGeocoder, self).__init__(address)
 
     # Official usage/limit policy both unclear and seemingly lax
     def geocode(self):
@@ -57,7 +57,7 @@ class OpenCageGeocoder(Geocoders):
     """Opencage geocoder"""
 
     def __init__(self, address):
-        return super(OpenCageGeocoder, self).__init__(self, address)
+        return super(OpenCageGeocoder, self).__init__(address)
 
     #Maximum of 2500 reqs per api key per day, 1 req/sec
     def geocode(self):
