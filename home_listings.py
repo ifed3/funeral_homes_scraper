@@ -101,6 +101,8 @@ class Listing(object):
         self.description = None
         self.categories = []
         self.address = None
+        self.neighborhood = None
+        self.county = None
         self.city = None
         self.state = None
         self.zip = None
