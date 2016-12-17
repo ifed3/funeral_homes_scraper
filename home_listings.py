@@ -2,6 +2,7 @@
 """Scrape listings"""
 
 import sys
+import csv
 import crawler
 import listing_geocoder
 
@@ -17,6 +18,7 @@ def main():
     for num in xrange(records["total_pages"]): # Subsequent iterations with pagination urls
         paginated_page_spider = get_page_spider(url + '/page/' + str(num+1), listings_per_page)
         collect_listing_objects(paginated_page_spider, homes_list)
+    output_to_csv(homes_list)
 
 def collect_listing_objects(page_spider, homes_list):
     """Add listing derived from each page's listings' markup to total list"""
@@ -100,6 +102,14 @@ def get_page_spider(url, listings_per_page):
     """Provide the spider derived from the webpage"""
     return crawler.parse_markup(url, listings_per_page)
 
+def output_to_csv(homes_list):
+    """Output homes list to a csv file"""
+    keys = homes_list[0].keys()
+    with open('homes_listing.csv', 'wb+') as csv_file:
+        writer = csv.DictWriter(csv_file, keys)
+        writer.writeheader()
+        writer.writerows(homes_list)
+
 class Listing(object):
     """Represents a home listing"""
     def __init__(self):
@@ -108,11 +118,11 @@ class Listing(object):
         self.description = None
         self.categories = []
         self.address = None
-        self.neighborhood = None
-        self.county = None
         self.city = None
         self.state = None
         self.zip = None
+        self.neighborhood = None
+        self.county = None
         self.phone = None
         self.fax = None
         self.website = None
