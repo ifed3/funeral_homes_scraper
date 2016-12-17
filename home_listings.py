@@ -130,5 +130,5 @@ class Listing(object):
         self.lon = None
         self.verified = True
 
-if __name__ == 'main':
+if __name__ == '__main__':
     main()
