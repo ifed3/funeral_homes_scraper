@@ -3,6 +3,7 @@
 
 import sys
 import crawler
+import listing_geocoder
 
 def main():
     """Entry point into scraping all listings on all pages"""
@@ -66,7 +67,13 @@ def set_listing_address(listing, addr_spans_spider):
 
 def geocode_address(listing):
     """Geocode addresses to lat/lon"""
-    pass
+    address = ", ".join([listing.address, listing.city, listing.state, listing.zip])
+    location = listing_geocoder.Geocoders(address).geocode()
+    if location is not None:
+        listing.lat = location.lat
+        listing.lon = location.lng
+        listing.neighborhood = location.neighborhood
+        listing.county = location.county
 
 def get_listing_categories(category_spider):
     """Return array of categories which listing belongs to"""
