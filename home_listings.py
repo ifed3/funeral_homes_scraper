@@ -5,6 +5,7 @@ import sys
 import csv
 import crawler
 import listing_geocoder
+import listing_logger
 
 def main():
     """Entry point into scraping all listings on all pages"""
@@ -131,4 +132,5 @@ class Listing(object):
         self.verified = True
 
 if __name__ == '__main__':
+    logger = listing_logger.create_logger(__name__)
     main()

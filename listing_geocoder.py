@@ -4,6 +4,7 @@ import os
 import time
 import random
 import geocoder
+import listing_logger
 
 OPENCAGE_API_KEY = os.environ['OPENCAGE_API_KEY']
 BING_API_KEY = os.environ['BING_API_KEY']
@@ -65,3 +66,5 @@ class OpenCageGeocoder(Geocoders):
         Geocoders.count_dict['total'] += 1
         Geocoders.count_dict['opencage'] += 1
         return geocoder.opencage(self.address, key=OPENCAGE_API_KEY)
+
+logger = listing_logger.create_logger(__name__)        

@@ -3,6 +3,7 @@
 import random
 import requests
 from bs4 import BeautifulSoup
+import listing_logger
 
 USER_AGENT = [
     "Mozilla/5.0 (Macintosh; Intel MAC OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36",
@@ -38,3 +39,5 @@ def parse_markup(url, listings_per_page):
     if spider is None:
         raise AttributeError("Markup could not be parsed from %s" % url)
     return spider
+
+logger = listing_logger.create_logger(__name__)
