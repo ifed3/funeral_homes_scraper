@@ -81,7 +81,7 @@ def get_listing_categories(category_spider):
     """Return array of categories which listing belongs to"""
     categories = []
     for category in category_spider.find_all('a'):
-        if category['title']: # Avoid href with title, they represent non-category items
+        if 'title' in category.attrs: # Avoid href with title, they represent non-category items
             continue
         categories.append(str(category.string))
     return categories
@@ -129,3 +129,6 @@ class Listing(object):
         self.lat = None
         self.lon = None
         self.verified = True
+
+if __name__ == 'main':
+    main()
