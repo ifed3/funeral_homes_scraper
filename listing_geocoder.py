@@ -3,34 +3,30 @@
 import os
 import time
 import random
-from collections import namedtuple
 import geocoder
 
-
-MAPZEN_API_KEY = os.environ['MAPZEN_API_KEY']
-MAPBOX_TOKEN = os.environ['MAPBOX_TOKEN']
+OPENCAGE_API_KEY = os.environ['OPENCAGE_API_KEY']
 BING_API_KEY = os.environ['BING_API_KEY']
 
 class Geocoders(object):
     """List of geocoders to use and corresponding methods"""
 
     count_dict = {'total': 0, 'bing': 0, 'google': 0, 'opencage': 0}
-    location = namedtuple("Location", "lat lon")
 
     def __init__(self, address):
         self.address = address
 
     def geocode(self):
-        """Provide a lat/lon tuple"""
+        """Return a geocoded object with location data"""
         rand_num = random.randint(0, 99)
 
         # Use bing 90% of time, google 7% and opencage 3% due to rate limiting factors
         if rand_num < 3: # Opencage
-            pass
+            return OpenCageGeocoder(self.address).geocode()
         elif rand_num < 10: # Google
-            pass
+            return GoogleGeocoder(self.address).geocode()
         else: # bing
-            pass
+            return BingGeocoder(self.address).geocode()
 
 class GoogleGeocoder(Geocoders):
     """Google geocoder"""
@@ -55,7 +51,7 @@ class BingGeocoder(Geocoders):
     def geocode(self):
         Geocoders.count_dict['total'] += 1
         Geocoders.count_dict['bing'] += 1
-        return geocoder.bing(self.address)
+        return geocoder.bing(self.address, key=BING_API_KEY)
 
 class OpenCageGeocoder(Geocoders):
     """Opencage geocoder"""
@@ -67,5 +63,5 @@ class OpenCageGeocoder(Geocoders):
     def geocode(self):
         time.sleep(1)
         Geocoders.count_dict['total'] += 1
-        Geocoders.count_dict['google'] += 1
-        return geocoder.opencage(self.address)
+        Geocoders.count_dict['opencage'] += 1
+        return geocoder.opencage(self.address, key=OPENCAGE_API_KEY)
