@@ -3,6 +3,7 @@
 
 import sys
 import csv
+import threading
 import crawler
 import listing_geocoder
 import listing_logger
@@ -12,14 +13,25 @@ def main():
     url = sys.argv[1]
     listings_per_page = sys.argv[2]
     homes_list = []
+    thread_list = []
     # First iteration to retrieve record/pagination info and scrape first page listings
     try:
         page_spider = get_page_spider(url, listings_per_page)
-        collect_listing_objects(page_spider, homes_list)
         records = set_pagination_data(get_records_spider(page_spider))
+        initial_thread = threading.Thread(target=collect_listing_objects, args=(page_spider, homes_list))
+        initial_thread.daemon = True
+        thread_list.append(initial_thread)
+        initial_thread.start()
         for num in xrange(records["total_pages"]): # Subsequent iterations with pagination urls
+            # Create thread to process listing scrapes on particular page
             paginated_page_spider = get_page_spider(url + '/page/' + str(num+1), listings_per_page)
-            collect_listing_objects(paginated_page_spider, homes_list)
+            scrape_thread = threading.Thread(target=collect_listing_objects, args=(paginated_page_spider, homes_list))
+            scrape_thread.daemon = True
+            thread_list.append(scrape_thread)
+            logger.info(scrape_thread.name + " is scraping page " + str(num+1))
+            scrape_thread.start()
+        for thread in thread_list:
+            thread.join()
         output_to_csv(homes_list)
     except:
         logger.error("Main entry error", exc_info=True)
@@ -98,8 +110,6 @@ def set_listing_address(listing, addr_spans_spider):
             listing.zip = locality[2].strip()
     except IndexError:
         logger.info(locality)
-
-
     if listing.address and listing.city:
         geocode_address(listing)
 
@@ -144,7 +154,7 @@ def get_page_spider(url, listings_per_page):
 
 def output_to_csv(homes_list):
     """Output homes list to a csv file"""
-    keys = homes_list[0].keys()
+    keys = vars(homes_list[0]).keys()
     with open('homes_listing.csv', 'wb+') as csv_file:
         writer = csv.DictWriter(csv_file, keys)
         writer.writeheader()
